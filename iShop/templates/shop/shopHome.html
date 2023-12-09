@@ -1,0 +1,46 @@
+{% extends "../base.html" %}
+{% block title %}iShop | Home{% endblock title %}
+{% block body %}
+<section class="text-gray-600 body-font">
+    <div class="container px-5 mt-24 mx-auto">
+      <div class="flex flex-col text-center w-full mb-20">
+        <h2 class=" text-indigo-500 tracking-widest font-medium title-font mb-1 text-lg">Hey there, {{request.user}}! Continue Shopping with</h2>
+        <h1 class="sm:text-5xl text-4xl font-medium title-font mb-4 text-gray-900">iShop | Premium Products, Low Prices</h1>
+      </div>
+    </div>
+  </section>
+
+<section class="text-gray-600 body-font">
+  {% for product, range, n in allProducts %}
+    <div class="container px-5 py-10 mx-auto">
+        <h1 class="text-4xl my-5 font-semibold">{{product.0.category}} - Recommended Items</h1>
+      <div class="flex flex-wrap -m-4">
+        {% for i in product %}
+          <div class="lg:w-1/4 md:w-1/2 p-4 w-full shadow-lg border-2 my-2 border-gray-300 rounded-md">
+          <a href="products/productView/{{i.name}}" target="_blank" class="block relative h-[400px] rounded overflow-hidden">
+            <img alt="ecommerce" class="object-cover object-center w-full h-[400px] block" src="/media/{{i.img}}">
+          </a>
+          <div class="mt-4">
+            <h3 class="text-gray-500 text-sm tracking-widest title-font mb-1">{{i.category}} / {{i.sub_category}}</h3>
+            <h2 class="text-gray-900 title-font text-2xl font-semibold">{{i.name}}</h2>
+            <p>{{i.desc|truncatechars:100}}</p>
+            <p class="mt-5"><b>Price : Rs. {{i.price}}</b></p>
+            <div class="flex">
+
+
+            <form action="/addItem" method="post">
+              {% csrf_token %}
+              <input type="checkbox" checked class="hidden" name="item" value="{{i.id}}">
+              <input type="checkbox" checked class="hidden" name="user" value="{{request.user.username}}">
+              <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Add To Cart</button>
+            </form>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    <hr>
+    {% endfor %}
+  </section>
+{% endblock body %}

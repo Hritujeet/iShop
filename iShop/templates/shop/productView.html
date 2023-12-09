@@ -1,0 +1,70 @@
+{% extends "../base.html" %}
+{% block title %}Product View | {{product.name}}{% endblock title %}
+{% block body %}
+<section class="text-gray-600 body-font overflow-hidden">
+    <div class="container px-5 py-24 mx-auto">
+      <div class="lg:w-4/5 mx-auto flex flex-wrap">
+        <img alt="ecommerce" class="lg:w-1/2 w-[700px] md:h-auto h-[300px] object-cover object-center rounded" src="/media/{{product.img}}">
+        <div class="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
+          <h2 class="text-sm title-font text-gray-500 tracking-widest">{{product.category}} / {{product.sub_category}}</h2>
+          <h1 class="text-gray-900 text-3xl title-font font-medium mb-1">{{product.name}}</h1>
+          <p class="leading-relaxed hidden md:block text-xs">{{product.desc}}</p>
+          <div class="flex my-10 space-x-4">
+            <span class="title-font font-medium text-2xl text-gray-900">Rs. {{product.price}}</span>
+            <button type="button" class="focus:outline-none text-white bg-yellow-400 hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 font-medium rounded-md text-sm px-5 py-2 mr-2 mb-2 dark:focus:ring-yellow-900">Buy now</button>
+            <form action="/addItem" method="post">
+                {% csrf_token %}
+                <input type="checkbox" checked class="hidden" name="item" value="{{product.id}}">
+                <input type="checkbox" checked class="hidden" name="user" value="{{request.user.username}}">
+                <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Add to Cart</button>
+              </form>
+          </div>
+          <p class="leading-relaxed block md:hidden text-xs">{{product.desc}}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container mx-auto my-5">
+    <h1 class="text-4xl font-semibold my-5">Post Your Review</h1>
+      <form action="/products/productView/{{product.name}}" method="post">   
+        {% csrf_token %}
+        <label for="search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Write Your Review</label>
+        <div class="relative">
+          <input type="number" name="rating" class="block w-full my-2 p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 duration-150 focus:ring-blue-500 focus:border-blue-500" placeholder="Ratings out of 5" required>
+            <input type="search" name="content" class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 duration-150 focus:ring-blue-500 focus:border-blue-500" placeholder="Review" required>
+            <input type="checkbox" checked class="hidden" name="item" value="{{product.id}}">
+            <input type="checkbox" checked class="hidden" name="user" value="{{request.user.username}}">
+            <button type="submit" class="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 duration-200">Post Review</button>
+        </div>
+      </form>
+  </section>
+  <hr>
+  <section class="container mx-auto">
+    <h1 class="text-4xl font-bold my-5 text-center">Reviews for {{product.name}}</h1>
+    <section class="text-gray-600 body-font overflow-hidden">
+      <div class="container px-5 py-24 mx-auto">
+        <div class="-my-8 divide-y-2 divide-gray-100">
+         {% if reviews|length == 0 %}
+         <h3 class="text-3xl font-semibold text-gray-600 my-5">No Reviews Yet | Be the first one to write a review</h3>
+         {% else %}
+         {% for r in reviews %}
+          <div class="py-8 flex flex-wrap md:flex-nowrap">
+            <div class="md:w-64 md:mb-0 mb-6 flex-shrink-0 flex flex-col">
+              {% load static %}
+              <img src="{% static "img/user.png" %}" class="h-auto w-40 rounded-full" alt="userImage">
+            </div>
+            <div class="md:flex-grow">
+              <h2 class="text-2xl font-medium text-gray-900 title-font mb-2">Review By {{r.user.username}}</h2>
+              <p class="mt-1 text-gray-500">{{r.timestamp}}</p>
+              <p class="mt-1 text-gray-500">Ratings : {{r.rating}}/5</p>
+              <p class="leading-relaxed text-lg">{{r.content}}</p>
+            </div>
+          </div>
+        </div>
+         {% endfor %}
+         {% endif %}
+      </div>
+    </section>
+  </section>
+{% endblock body %}
